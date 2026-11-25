@@ -7,7 +7,7 @@ Stack: Next.js 15 (App Router), TypeScript, Tailwind CSS, Supabase (Auth, Postgr
 ## Setup
 
 1. Create a Supabase project.
-2. In the SQL editor, run `supabase/migrations/0001_init.sql`. It creates every table, index, row level security policy, the private `siteledger-files` storage bucket and the signup trigger that creates a company, workspace, owner membership, team member record and subscription for each new user.
+2. In the SQL editor, run `supabase/migrations/0001_init.sql`. Everything lives in a dedicated `siteledger` schema, so the project can be shared with other apps. Afterwards open Project Settings, API, Exposed schemas, add `siteledger` and save, otherwise the Data API returns "schema not found". Auth users are shared project wide: only signups made through SiteLedger get a workspace automatically, and existing users from other apps get one on first login. It creates every table, index, row level security policy, the private `siteledger-files` storage bucket and the signup trigger that creates a company, workspace, owner membership, team member record and subscription for each new user.
 3. Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Optionally set `NEXT_PUBLIC_SITE_URL` for sitemap and metadata.
 4. In Supabase Authentication settings:
    - Set Site URL to your deployed URL.

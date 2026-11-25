@@ -78,11 +78,21 @@ export function DataProvider({ children, seed }: { children: ReactNode; seed: (c
     (async () => {
       const { data: u } = await sb.auth.getUser();
       if (!u.user) { router.replace("/login"); return; }
-      const [{ data: profile }, { data: mem, error }] = await Promise.all([
+      let [{ data: profile }, { data: mem, error }] = await Promise.all([
         sb.from("profiles").select("*").eq("id", u.user.id).maybeSingle(),
         sb.from("workspace_members").select("role, workspaces(*, companies(*))").eq("user_id", u.user.id).limit(1),
       ]);
-      const m: any = mem?.[0];
+      let m: any = mem?.[0];
+      if (!error && !m?.workspaces) {
+        // Existing auth user with no SiteLedger workspace yet: create one.
+        const { error: rpcError } = await sb.rpc("ensure_workspace");
+        if (!rpcError) {
+          const { data: again } = await sb.from("workspace_members").select("role, workspaces(*, companies(*))").eq("user_id", u.user.id).limit(1);
+          m = again?.[0];
+          const { data: p2 } = await sb.from("profiles").select("*").eq("id", u.user.id).maybeSingle();
+          profile = p2;
+        }
+      }
       if (error || !m?.workspaces) {
         setFatal(error?.message || "No workspace was found for this account. Confirm that supabase/migrations/0001_init.sql has been applied to your project.");
         setLoading(false);

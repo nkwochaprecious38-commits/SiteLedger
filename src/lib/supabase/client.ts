@@ -10,7 +10,8 @@ export function supabaseBrowser() {
   if (!client) {
     client = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL || "http://localhost:54321",
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "not-configured"
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "not-configured",
+      { db: { schema: "siteledger" } }
     );
   }
   return client;

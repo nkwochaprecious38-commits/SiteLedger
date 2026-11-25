@@ -29,7 +29,7 @@ function Form() {
     setBusy(true);
     const { data, error } = await supabaseBrowser().auth.signUp({
       email: f.email.trim(), password: f.password,
-      options: { data: { full_name: f.name.trim(), company_name: f.company.trim(), plan: f.plan }, emailRedirectTo: `${window.location.origin}/auth/callback` },
+      options: { data: { app: "siteledger", full_name: f.name.trim(), company_name: f.company.trim(), plan: f.plan }, emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
     if (error) { setBusy(false); setErr(error.message); return; }
     if (data.session) { router.replace("/app"); router.refresh(); return; }
