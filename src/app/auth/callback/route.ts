@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") || "/app";
   const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/app";
-  if (code && process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (code && /^https?:\/\//.test((process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim())) {
     const supabase = await supabaseServer();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(`${origin}${safeNext}`);

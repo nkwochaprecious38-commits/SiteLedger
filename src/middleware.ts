@@ -2,8 +2,9 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const rawUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
+  const url = /^https?:\/\/[^\s"']+$/.test(rawUrl) ? rawUrl : undefined;
+  const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim() || undefined;
   const path = request.nextUrl.pathname;
   const isApp = path === "/app" || path.startsWith("/app/");
   const isAuthPage = path === "/login" || path === "/signup" || path === "/forgot-password";
